@@ -11,7 +11,12 @@ import { Button } from "../components/Button";
 import { Table, Tr, Td, Th, Thead, Tbody } from "../components/Table";
 //redux
 import { connect } from "react-redux";
+import { addTaskAction } from "../redux/actions/ToDoListActions";
 class ToDoList extends Component {
+  // Tạo state
+  state = {
+    taskName: "",
+  };
   // Hàm rendertasktodo()
   // filter() từng task nếu task.done == true thì cho vào mảng mới
   // map() mảng mới đó rồi return các giá trị Tr theo mẫu
@@ -71,8 +76,35 @@ class ToDoList extends Component {
             <Heading3 className='text-left text-success mt-3'>
               TO DO LIST
             </Heading3>
-            <TextField label=' Task name '></TextField>
-            <Button className='ml-2'>
+            <TextField
+              // lấy dữ liệu khi có thay đổi tại Textfield vào state
+              onChange={(e) => {
+                this.setState(
+                  {
+                    taskName: e.target.value,
+                  },
+                  () => {
+                    console.log("taskName: ", this.state.taskName);
+                  }
+                );
+              }}
+              name='taskName'
+              label='Task name'></TextField>
+            <Button
+              onClick={() => {
+                // lấy thông tin người dùng nhập vào từ input
+                let { taskName } = this.state;
+                // tạo object newTask
+                let newTask = {
+                  id: Date.now(),
+                  taskName: taskName,
+                  done: true,
+                };
+                console.log("newTask: ", newTask);
+                // đưa newTask vào taskList ở store bằng phương thức dispatch
+                this.props.dispatch(addTaskAction(newTask));
+              }}
+              className='ml-2'>
               <i className='fa fa-plus'></i> Add task
             </Button>
             <Button className='ml-2'>
@@ -100,4 +132,5 @@ const mapStatetoProps = (state) => {
     taskList: state.ToDoListReducer.taskList,
   };
 };
+
 export default connect(mapStatetoProps)(ToDoList);
