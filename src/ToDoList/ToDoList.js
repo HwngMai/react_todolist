@@ -15,6 +15,8 @@ import {
   addTaskToAction,
   doneTaskAction,
   deleteTaskAction,
+  editTaskAction,
+  updateTaskToAction,
 } from "../redux/actions/ToDoListActions";
 //Theme
 import { arrThemes } from "../themes/ThemeManager";
@@ -36,7 +38,12 @@ class ToDoList extends Component {
             <Th className='text-left'> {task.taskName} </Th>
             <Th className='text-right'>
               {" "}
-              <Button className='ml-2'>
+              <Button
+                // Hàm editTask
+                onClick={() => {
+                  this.props.dispatch(editTaskAction(task));
+                }}
+                className='ml-2'>
                 <i className='fa fa-edit'></i>
               </Button>{" "}
               <Button
@@ -95,7 +102,22 @@ class ToDoList extends Component {
       );
     });
   };
-
+  //** Để editTask */
+  // Cách 1: Life cycle nhận vào props mới thực thi trước render
+  UNSAFE_componentWillReceiveProps(newProps) {
+    this.setState({
+      // lấy giá trị taskName của taskEdit gán vào taskName của state
+      taskName: newProps.taskEdit.taskName,
+    });
+  }
+  // Cách 2: Lifecycle tĩnh không truy suất được ở trỏ this
+  // static getDerivedStateFromProps(newProps, currentState) {
+  //   // newProps: là props mới, props cũ là this.props
+  //   // currentState: ứng với state hiện tại this.state
+  //   // hoặc trả về state mới
+  //   let newState = { ...currentState, taskName: newProps.taskEdit.taskName };
+  //   return newState;
+  // }
   render() {
     return (
       <ThemeProvider theme={this.props.themeToDoList}>
@@ -119,6 +141,9 @@ class ToDoList extends Component {
               TO DO LIST
             </Heading3>
             <TextField
+              // Gán giá trị là taskName của state
+              // taskName có thể gán lại bằng taskEdit.taskName khi editTask line:107
+              value={this.state.taskName}
               // lấy dữ liệu khi có thay đổi tại Textfield vào state
               onChange={(e) => {
                 this.setState(
@@ -143,13 +168,18 @@ class ToDoList extends Component {
                   done: true,
                 };
                 console.log("newTask: ", newTask);
-                // đưa newTask vào taskList ở store bằng phương thức dispatch
+                // đưa newTask vào taskList ở store action bằng phương thức dispatch
                 this.props.dispatch(addTaskToAction(newTask));
               }}
               className='ml-2'>
               <i className='fa fa-plus'></i> Add task
             </Button>
-            <Button className='ml-2'>
+            <Button
+              onClick={() => {
+                // đưa taskName cần update vào taskName ở store action bằng phương thức dispatch
+                this.props.dispatch(updateTaskToAction(this.state.taskName));
+              }}
+              className='ml-2'>
               <i className='fa fa-upload'></i> Update task
             </Button>
             <hr />
@@ -167,11 +197,22 @@ class ToDoList extends Component {
       </ThemeProvider>
     );
   }
+  // LifeCycle trả về props cũ và state cũ của components trước khi render nhưng chạy sau khi render
+  componentDidUpdate(prevProps, PrevState) {
+    // So sánh props trước đó tức taskEdit trước mà khác taskEdit sau:
+    if (prevProps.taskEdit.id !== this.props.taskEdit.id) {
+      this.setState({
+        taskName: this.props.taskEdit.taskName,
+      });
+    }
+  }
 }
+
 const mapStatetoProps = (state) => {
   return {
     themeToDoList: state.ToDoListReducer.themeToDoList,
     taskList: state.ToDoListReducer.taskList,
+    taskEdit: state.ToDoListReducer.taskEdit,
   };
 };
 

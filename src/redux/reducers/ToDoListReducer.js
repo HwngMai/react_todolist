@@ -1,5 +1,11 @@
 import { arrThemes } from "../../themes/ThemeManager";
-import { add_task, delete_task, done_task } from "../types/ToDoListTypes";
+import {
+  add_task,
+  delete_task,
+  done_task,
+  edit_task,
+  update_task,
+} from "../types/ToDoListTypes";
 import { change_theme } from "../types/ToDoListTypes";
 // Tạo store cho ToDoListAction
 const initialState = {
@@ -8,6 +14,7 @@ const initialState = {
     { id: "task-1", taskName: "Ăn cơm", done: true },
     { id: "task-2", taskName: "Lau nhà", done: false },
   ],
+  taskEdit: { id: "task-3", taskName: "Cứu thế giới", done: true },
 };
 //  Xử lí dữ liệu lấy từ action
 export default (state = initialState, action) => {
@@ -17,7 +24,7 @@ export default (state = initialState, action) => {
       console.log("todo", action.newTask);
       // Kiểm tra rỗng
       if (action.newTask.taskName.trim() === "") {
-        alert("Nhập vào task");
+        alert("Nhập vào task!");
         return { ...state };
       } else {
         // Kiểm tra trùng
@@ -29,7 +36,7 @@ export default (state = initialState, action) => {
         );
         // Nếu tìm thấy
         if (index !== -1) {
-          alert("Task đã tồn tại");
+          alert("Task đã tồn tại!");
           return { ...state };
         }
         // Nếu ko tìm thấy tức chưa có
@@ -79,6 +86,27 @@ export default (state = initialState, action) => {
       }
       // Truyền lại state, state sẽ tự render lại
       return { ...state, taskList: taskListUpdate };
+    }
+    case edit_task: {
+      // Truyền lại state, state sẽ tự render lại bổ sung taskEdit trong state bằng taskEdit từ action truyền về
+      return { ...state, taskEdit: action.taskEdit };
+    }
+    case update_task: {
+      console.log(action.taskNameUpdate);
+      // Chỉnh sửa - tạo mới state cho taskEdit bổ sung thay đổi taskName bằng taskName từ action truyền về
+      state.taskEdit = { ...state.taskEdit, taskName: action.taskNameUpdate };
+      // Tạo taskListUpdate từ taskList
+      let taskListUpdate = [...state.taskList];
+      // Tìm index trong mảng taskEdit từ state để chỉnh sửa
+      let indexUpdate = taskListUpdate.findIndex(
+        (task) => task.id == state.taskEdit.id
+      );
+      // Nếu tìm thấy thì gán taskEdit vào cho phần tử có indexUpdate trong taskListUpdate
+      if (indexUpdate !== -1) {
+        taskListUpdate[indexUpdate] = state.taskEdit;
+      }
+      state.taskList = taskListUpdate;
+      return { ...state };
     }
     default:
       return { ...state };
