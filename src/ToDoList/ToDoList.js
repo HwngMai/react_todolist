@@ -12,6 +12,8 @@ import { Table, Tr, Td, Th, Thead, Tbody } from "../components/Table";
 //redux
 import { connect } from "react-redux";
 import { addTaskToAction } from "../redux/actions/ToDoListActions";
+//Theme
+import { arrThemes } from "../themes/ThemeManager";
 class ToDoList extends Component {
   // Tạo state
   state = {
@@ -62,16 +64,36 @@ class ToDoList extends Component {
         );
       });
   };
+  // Hàm renderTheme()
+  // Mỗi theme trong mảng arrThemes => render ra một option
+  renderTheme = () => {
+    return arrThemes.map((theme, index) => {
+      return (
+        <option key={index} value={theme.id}>
+          {theme.name}
+        </option>
+      );
+    });
+  };
+
   render() {
     return (
       <ThemeProvider theme={this.props.themeToDoList}>
         <div>
           {" "}
           <Container className='w-75'>
-            <Dropdown>
-              <option>Dark Theme</option>
-              <option>Light Theme</option>
-              <option>Primary Theme</option>
+            <Dropdown
+              // Lấy dữ liệu theme khi thay đổi
+              onChange={(e) => {
+                let { value } = e.target;
+                // Dispatch value lên reducer
+                this.props.dispatch({
+                  type: "change_theme",
+                  themeId: value,
+                });
+              }}>
+              {/* gọi hàm render theme */}
+              {this.renderTheme()}
             </Dropdown>
             <Heading3 className='text-left text-success mt-3'>
               TO DO LIST

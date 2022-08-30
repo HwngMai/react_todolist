@@ -1,10 +1,8 @@
-import { ToDoListDarkTheme } from "../../themes/ToDoListDarkTheme";
-import { ToDoListLightTheme } from "../../themes/ToDoListLightTheme";
-import { ToDoListPrimaryTheme } from "../../themes/ToDoListPrimaryTheme";
+import { arrThemes } from "../../themes/ThemeManager";
 import { add_task } from "../types/ToDoListTypes";
 // Tạo store cho ToDoListAction
 const initialState = {
-  themeToDoList: ToDoListLightTheme,
+  themeToDoList: arrThemes[0].theme,
   taskList: [
     { id: "task-1", taskName: "Ăn cơm", done: true },
     { id: "task-2", taskName: "Lau nhà", done: false },
@@ -37,6 +35,16 @@ export default (state = initialState, action) => {
       // Gán taskList = tastListUpdate
       taskListUpdate.push(action.newTask);
       state.taskList = [...taskListUpdate];
+      return { ...state };
+    }
+    case "change_theme": {
+      // tìm  obj theme dựa vào id và value từ target của action
+      let themeChange = arrThemes.find((theme) => theme.id == action.themeId);
+      console.log("themeChange: ", themeChange);
+      // Nếu tìm thấy gán theme của obj theme đó cho state
+      if (themeChange) {
+        state.themeToDoList = { ...themeChange.theme };
+      }
       return { ...state };
     }
     default:
