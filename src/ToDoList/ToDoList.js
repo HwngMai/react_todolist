@@ -11,9 +11,14 @@ import { Button } from "../components/Button";
 import { Table, Tr, Td, Th, Thead, Tbody } from "../components/Table";
 //redux
 import { connect } from "react-redux";
-import { addTaskToAction } from "../redux/actions/ToDoListActions";
+import {
+  addTaskToAction,
+  doneTaskAction,
+  deleteTaskAction,
+} from "../redux/actions/ToDoListActions";
 //Theme
 import { arrThemes } from "../themes/ThemeManager";
+import { change_theme } from "../redux/types/ToDoListTypes";
 class ToDoList extends Component {
   // Tạo state
   state = {
@@ -34,10 +39,20 @@ class ToDoList extends Component {
               <Button className='ml-2'>
                 <i className='fa fa-edit'></i>
               </Button>{" "}
-              <Button className='ml-2'>
+              <Button
+                // Hàm chuyển task sang taskDone
+                onClick={() => {
+                  this.props.dispatch(doneTaskAction(task.id));
+                }}
+                className='ml-2'>
                 <i className='fa fa-check'></i>
               </Button>{" "}
-              <Button className='ml-2'>
+              <Button
+                // Hàm xóa task
+                onClick={() => {
+                  this.props.dispatch(deleteTaskAction(task.id));
+                }}
+                className='ml-2'>
                 <i className='fa fa-trash'></i>
               </Button>{" "}
             </Th>
@@ -56,7 +71,12 @@ class ToDoList extends Component {
           <Tr key={index}>
             <Th className='text-left'> {task.taskName} </Th>
             <Th className='text-right'>
-              <Button className='ml-2'>
+              <Button
+                // Hàm xóa task
+                onClick={() => {
+                  this.props.dispatch(deleteTaskAction(task.id));
+                }}
+                className='ml-2'>
                 <i className='fa fa-trash'></i>
               </Button>{" "}
             </Th>
@@ -88,7 +108,7 @@ class ToDoList extends Component {
                 let { value } = e.target;
                 // Dispatch value lên reducer
                 this.props.dispatch({
-                  type: "change_theme",
+                  type: change_theme,
                   themeId: value,
                 });
               }}>

@@ -1,2 +1,5 @@
 //Types dùng để lưu các type của action dưới dạng biến, nhằm dễ sửa chữa, thay thế
 export const add_task = "add_task";
+export const change_theme = "change_theme";
+export const delete_task = "delete_task";
+export const done_task = "done_task";
