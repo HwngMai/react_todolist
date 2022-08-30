@@ -11,7 +11,7 @@ import { Button } from "../components/Button";
 import { Table, Tr, Td, Th, Thead, Tbody } from "../components/Table";
 //redux
 import { connect } from "react-redux";
-import { addTaskAction } from "../redux/actions/ToDoListActions";
+import { addTaskToAction } from "../redux/actions/ToDoListActions";
 class ToDoList extends Component {
   // Tạo state
   state = {
@@ -102,7 +102,7 @@ class ToDoList extends Component {
                 };
                 console.log("newTask: ", newTask);
                 // đưa newTask vào taskList ở store bằng phương thức dispatch
-                this.props.dispatch(addTaskAction(newTask));
+                this.props.dispatch(addTaskToAction(newTask));
               }}
               className='ml-2'>
               <i className='fa fa-plus'></i> Add task

@@ -2,7 +2,7 @@ import { ToDoListDarkTheme } from "../../themes/ToDoListDarkTheme";
 import { ToDoListLightTheme } from "../../themes/ToDoListLightTheme";
 import { ToDoListPrimaryTheme } from "../../themes/ToDoListPrimaryTheme";
 import { add_task } from "../types/ToDoListTypes";
-
+// Tạo store cho ToDoListAction
 const initialState = {
   themeToDoList: ToDoListLightTheme,
   taskList: [
@@ -10,9 +10,10 @@ const initialState = {
     { id: "task-2", taskName: "Lau nhà", done: false },
   ],
 };
-
+//  Xử lí dữ liệu lấy từ action
 export default (state = initialState, action) => {
   switch (action.type) {
+    // action.type ở đây sẽ là: add_task
     case add_task: {
       console.log("todo", action.newTask);
       // Kiểm tra rỗng
