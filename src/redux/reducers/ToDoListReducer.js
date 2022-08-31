@@ -14,14 +14,14 @@ const initialState = {
     { id: "task-1", taskName: "Ăn cơm", done: true },
     { id: "task-2", taskName: "Lau nhà", done: false },
   ],
-  taskEdit: { id: "task-3", taskName: "Cứu thế giới", done: true },
+  taskEdit: { id: "task-3", taskName: "", done: true },
 };
 //  Xử lí dữ liệu lấy từ action
 export default (state = initialState, action) => {
   switch (action.type) {
     // action.type ở đây sẽ là: add_task
     case add_task: {
-      console.log("todo", action.newTask);
+      console.log("New task", action.newTask);
       // Kiểm tra rỗng
       if (action.newTask.taskName.trim() === "") {
         alert("Nhập vào task!");

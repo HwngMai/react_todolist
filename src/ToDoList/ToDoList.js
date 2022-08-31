@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { Container } from "../components/Container";
 import { ThemeProvider } from "styled-components";
-import { ToDoListDarkTheme } from "../themes/ToDoListDarkTheme";
-import { ToDoListLightTheme } from "../themes/ToDoListLightTheme";
-import { ToDoListPrimaryTheme } from "../themes/ToDoListPrimaryTheme";
 import { Dropdown } from "../components/Dropdown";
 import { Heading1, Heading2, Heading3 } from "../components/Heading";
 import { Label, TextField, Input } from "../components/TextField";
@@ -25,6 +22,8 @@ class ToDoList extends Component {
   // Tạo state
   state = {
     taskName: "",
+    disabledUpdate: true,
+    disabledAdd: false,
   };
   // Hàm rendertasktodo()
   // filter() từng task nếu task.done == true thì cho vào mảng mới
@@ -41,6 +40,12 @@ class ToDoList extends Component {
               <Button
                 // Hàm editTask
                 onClick={() => {
+                  // enable nút update
+                  // disable nút add
+                  this.setState({
+                    disabledUpdate: false,
+                    disabledAdd: true,
+                  });
                   this.props.dispatch(editTaskAction(task));
                 }}
                 className='ml-2'>
@@ -137,9 +142,7 @@ class ToDoList extends Component {
               {/* gọi hàm render theme */}
               {this.renderTheme()}
             </Dropdown>
-            <Heading3 className='text-left text-success mt-3'>
-              TO DO LIST
-            </Heading3>
+            <Heading3 className='text-left mt-3'>TO DO LIST</Heading3>
             <TextField
               // Gán giá trị là taskName của state
               // taskName có thể gán lại bằng taskEdit.taskName khi editTask line:107
@@ -156,39 +159,62 @@ class ToDoList extends Component {
                 );
               }}
               name='taskName'
-              label='Task name'></TextField>
-            <Button
-              onClick={() => {
-                // lấy thông tin người dùng nhập vào từ input
-                let { taskName } = this.state;
-                // tạo object newTask
-                let newTask = {
-                  id: Date.now(),
-                  taskName: taskName,
-                  done: true,
-                };
-                console.log("newTask: ", newTask);
-                // đưa newTask vào taskList ở store action bằng phương thức dispatch
-                this.props.dispatch(addTaskToAction(newTask));
-              }}
-              className='ml-2'>
-              <i className='fa fa-plus'></i> Add task
-            </Button>
-            <Button
-              onClick={() => {
-                // đưa taskName cần update vào taskName ở store action bằng phương thức dispatch
-                this.props.dispatch(updateTaskToAction(this.state.taskName));
-              }}
-              className='ml-2'>
-              <i className='fa fa-upload'></i> Update task
-            </Button>
+              label='Task name  : '></TextField>
+            {/* Kiểm tra state để render button disabled ? */}
+            {this.state.disabledAdd ? (
+              <Button disabled className='ml-2'>
+                <i className='fa fa-plus'></i> Add task
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  // lấy thông tin người dùng nhập vào từ input
+                  let { taskName } = this.state;
+                  // tạo object newTask
+                  let newTask = {
+                    id: Date.now(),
+                    taskName: taskName,
+                    done: true,
+                  };
+                  console.log("newTask: ", newTask);
+                  // đưa newTask vào taskList ở store action bằng phương thức dispatch
+                  this.props.dispatch(addTaskToAction(newTask));
+                }}
+                className='ml-2'>
+                <i className='fa fa-plus'></i> Add task
+              </Button>
+            )}
+            {this.state.disabledUpdate ? (
+              // nếu disableUpdate: true => disable
+              <Button disabled className='ml-2'>
+                <i className='fa fa-upload'></i> Update task
+              </Button>
+            ) : (
+              // nếu disableUpdate: false => enable
+              <Button
+                onClick={() => {
+                  // enable nút add
+                  // disable nút update
+                  this.setState({
+                    disabledUpdate: true,
+                    disabledAdd: false,
+                  });
+                  // đưa taskName cần update vào taskName ở store action bằng phương thức dispatch
+                  this.props.dispatch(updateTaskToAction(this.state.taskName));
+                }}
+                className='ml-2'>
+                <i className='fa fa-upload'></i> Update task
+              </Button>
+            )}
             <hr />
-            <Heading3 className='text-left'>Task to do</Heading3>
+            <Heading3 className='text-left text-warning '>TASK TO DO</Heading3>
             <Table>
               <Thead>{this.renderTaskToDo()}</Thead>
             </Table>
             <hr />
-            <Heading3 className='text-left'>Task Complete</Heading3>
+            <Heading3 className='text-left text-success'>
+              TASK COMPLETE
+            </Heading3>
             <Table>
               <Thead>{this.renderTaskDone()}</Thead>
             </Table>
